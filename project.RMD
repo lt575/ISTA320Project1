@@ -22,7 +22,7 @@ library(DescTools)
 ```
 
 ```{r}
-df <- read.csv("C:\\Users\\ual-laptop\\Downloads\\Rat_Sightings.csv", na = c("", "NA", "N/A"))
+df <- read.csv("Rat_Sightings.csv", na = c("", "NA", "N/A"))
 
 rats_clean <- df %>%
   rename(created_date = `Created.Date`,
