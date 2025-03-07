@@ -1,0 +1,30 @@
+library(tidyverse)
+library(ggplot2)
+library(dplyr)
+library(reshape2)
+library(DescTools)
+
+df <- read.csv("C:\\Users\\ual-laptop\\Downloads\\Rat_Sightings.csv", na = c("", "NA", "N/A"))
+
+rats_clean <- df %>%
+  rename(created_date = `Created.Date`,
+         location_type = `Location.Type`, borough = Borough) %>%
+  mutate(created_date = mdy_hms(created_date)) %>%
+  mutate(sighting_year = year(created_date),
+         sighting_month = month(created_date),
+         sighting_day = day(created_date),
+         sighting_weekday = wday(created_date, label = TRUE, abbr =
+                                   FALSE)) %>%
+  filter(borough != "Unspecified") 
+
+rats_borough <- rats_clean %>%
+  count(borough)
+
+plot1 <- ggplot(rats_borough, aes(x = borough, y = n, fill = borough)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Rat sightings in borough",
+       x = "Borough",
+       y = "Sightings count") +
+  theme_minimal()
+
+print(plot1)
