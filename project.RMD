@@ -1,9 +1,27 @@
+---
+title: "Project 1"
+author: "Leah Tesfaye"
+output:
+  pdf_document: default
+date: "2025-02-16"
+---
+```{r install_packages, eval=FALSE, echo=FALSE}
+install.packages("tinytex")
+tinytex::install_tinytex()
+install.packages("tidyverse")
+install.packages("ggplot2")
+install.packages("magrittr")
+```
+
+```{r}
 library(tidyverse)
 library(ggplot2)
 library(dplyr)
 library(reshape2)
 library(DescTools)
+```
 
+```{r}
 df <- read.csv("C:\\Users\\ual-laptop\\Downloads\\Rat_Sightings.csv", na = c("", "NA", "N/A"))
 
 rats_clean <- df %>%
@@ -15,7 +33,7 @@ rats_clean <- df %>%
          sighting_day = day(created_date),
          sighting_weekday = wday(created_date, label = TRUE, abbr =
                                    FALSE)) %>%
-  filter(borough != "Unspecified") 
+  filter(borough != "Unspecified")
 
 rats_borough <- rats_clean %>%
   count(borough)
@@ -28,3 +46,28 @@ plot1 <- ggplot(rats_borough, aes(x = borough, y = n, fill = borough)) +
   theme_minimal()
 
 print(plot1)
+```
+
+#Plot2
+
+```{r}
+monthly_count <- rats_clean %>%
+  group_by(sighting_year, borough, sighting_month) %>%
+  count() %>%
+  rename(month = sighting_month, sightings = n)
+
+monthly_count$month <- factor(monthly_count$month, levels = 1:12, labels = month.name)
+
+plot2 <- ggplot(monthly_count, aes(x = month, y = sightings, group = borough, color = borough)) +
+  geom_line() +
+  geom_point() +
+  labs(title = "Rat sightings by month",
+       x = "Month",
+       y = "Sightings Count",
+       color = "Borough") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  facet_wrap(~sighting_year, scales = "free_y", ncol = 2)
+
+print(plot2)
+```
